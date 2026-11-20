@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, TrendingUp, TrendingDown, User, LogOut } from "lucide-react";
+import { LayoutDashboard, TrendingUp, TrendingDown, Target, User, LogOut } from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
 import logo from "../logo.png";
 
@@ -7,6 +7,7 @@ const links = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/income", label: "Income", icon: TrendingUp },
   { to: "/expense", label: "Expense", icon: TrendingDown },
+  { to: "/budgets", label: "Budgets", icon: Target },
   { to: "/profile", label: "Profile", icon: User },
 ];
 

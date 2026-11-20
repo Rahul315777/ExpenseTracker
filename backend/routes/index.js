@@ -3,6 +3,7 @@ const auth = require("../middleware/auth");
 const user = require("../controllers/userController");
 const dash = require("../controllers/dashboardController");
 const makeTx = require("../controllers/transactionController");
+const budget = require("../controllers/budgetController");
 const Income = require("../models/incomeModel");
 const Expense = require("../models/expenseModel");
 
@@ -15,6 +16,10 @@ router.put("/user/update", auth, user.updateProfile);
 router.put("/user/password", auth, user.changePassword);
 
 router.get("/dashboard", auth, dash.getDashboard);
+
+router.get("/budget/get", auth, budget.getBudgets);
+router.post("/budget/set", auth, budget.setBudget);
+router.delete("/budget/delete/:id", auth, budget.deleteBudget);
 
 const mount = (name, Model, label) => {
   const c = makeTx(Model, label);

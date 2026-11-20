@@ -6,6 +6,7 @@ import Signup from "./pages/Signup.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Transactions from "./pages/Transactions.jsx";
 import Profile from "./pages/Profile.jsx";
+import Budgets from "./pages/Budgets.jsx";
 
 function Protected({ children }) {
   const { token } = useAuth();
@@ -25,6 +26,7 @@ export default function App() {
         <Route index element={<Dashboard />} />
         <Route path="income" element={<Transactions kind="income" />} />
         <Route path="expense" element={<Transactions kind="expense" />} />
+        <Route path="budgets" element={<Budgets />} />
         <Route path="profile" element={<Profile />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
