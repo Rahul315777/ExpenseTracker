@@ -58,6 +58,35 @@ module.exports = (Model, label) => ({
       res.json({ success: true, data: { items, total, page, pages: Math.max(Math.ceil(total / limit), 1), limit, totalAmount: sum[0]?.t || 0 } });
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
   },
+  bulkDelete: async (req, res) => {
+    try {
+      const ids = Array.isArray(req.body.ids) ? req.body.ids.filter((i) => mongoose.isValidObjectId(i)) : [];
+      if (!ids.length) return res.status(400).json({ success: false, message: "Select at least one item" });
+      if (ids.length > 200) return res.status(400).json({ success: false, message: "You can delete up to 200 items at a time" });
+      const r = await Model.deleteMany({ _id: { $in: ids }, userId: req.user._id });
+      res.json({ success: true, message: `${r.deletedCount} ${label.toLowerCase()} entries deleted`, deleted: r.deletedCount });
+    } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+  },
+  // change category and/or wallet for many items at once. walletId: "none" clears the wallet.
+  bulkUpdate: async (req, res) => {
+    try {
+      const { category, walletId } = req.body;
+      const ids = Array.isArray(req.body.ids) ? req.body.ids.filter((i) => mongoose.isValidObjectId(i)) : [];
+      if (!ids.length) return res.status(400).json({ success: false, message: "Select at least one item" });
+      if (ids.length > 200) return res.status(400).json({ success: false, message: "You can update up to 200 items at a time" });
+      const update = {};
+      if (category) update.category = category;
+      if (walletId === "none") update.walletId = null;
+      else if (walletId) {
+        const wid = await resolveWallet(req.user._id, walletId);
+        if (wid === false) return res.status(400).json({ success: false, message: "Wallet not found" });
+        update.walletId = wid;
+      }
+      if (!Object.keys(update).length) return res.status(400).json({ success: false, message: "Choose a category or a wallet to apply" });
+      const r = await Model.updateMany({ _id: { $in: ids }, userId: req.user._id }, { $set: update });
+      res.json({ success: true, message: `${r.modifiedCount} ${label.toLowerCase()} entries updated`, updated: r.modifiedCount });
+    } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+  },
   getAll: async (req, res) => {
     try {
       const data = await Model.find({ userId: req.user._id }).sort({ date: -1, createdAt: -1 });

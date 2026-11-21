@@ -110,7 +110,7 @@ export default function Transactions({ kind }) {
             </div>
           )}
 
-          <TransactionList kind={kind} title={title} categories={CATEGORIES[kind]} wallets={wallets} wname={wname} txt={txt} isIncome={isIncome} refreshKey={listKey} onEdit={openEdit} onDelete={remove} />
+          <TransactionList kind={kind} title={title} categories={CATEGORIES[kind]} wallets={wallets} wname={wname} txt={txt} isIncome={isIncome} refreshKey={listKey} onEdit={openEdit} onDelete={remove} onChanged={() => { load(); refreshList(); }} />
         </>
       )}
 

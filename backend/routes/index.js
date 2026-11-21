@@ -37,6 +37,8 @@ const mount = (name, Model, label) => {
   router.get(`/${name}/get`, auth, c.getAll);
   router.get(`/${name}/overview`, auth, c.overview);
   router.get(`/${name}/search`, auth, c.search);
+  router.post(`/${name}/bulk-delete`, auth, c.bulkDelete);
+  router.post(`/${name}/bulk-update`, auth, c.bulkUpdate);
   router.get(`/${name}/downloadexcel`, auth, c.downloadExcel);
   router.post(`/${name}/add`, auth, c.add);
   router.put(`/${name}/update/:id`, auth, c.update);
