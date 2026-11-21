@@ -4,6 +4,7 @@ const user = require("../controllers/userController");
 const dash = require("../controllers/dashboardController");
 const makeTx = require("../controllers/transactionController");
 const budget = require("../controllers/budgetController");
+const wallet = require("../controllers/walletController");
 const Income = require("../models/incomeModel");
 const Expense = require("../models/expenseModel");
 
@@ -16,6 +17,13 @@ router.put("/user/update", auth, user.updateProfile);
 router.put("/user/password", auth, user.changePassword);
 
 router.get("/dashboard", auth, dash.getDashboard);
+
+router.get("/wallet/get", auth, wallet.getWallets);
+router.post("/wallet/add", auth, wallet.createWallet);
+router.put("/wallet/update/:id", auth, wallet.updateWallet);
+router.delete("/wallet/delete/:id", auth, wallet.deleteWallet);
+router.post("/wallet/transfer", auth, wallet.transfer);
+router.delete("/wallet/transfer/:id", auth, wallet.deleteTransfer);
 
 router.get("/budget/get", auth, budget.getBudgets);
 router.post("/budget/set", auth, budget.setBudget);

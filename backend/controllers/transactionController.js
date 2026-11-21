@@ -1,15 +1,25 @@
 const ExcelJS = require("exceljs");
 const { getRange } = require("../utils");
+const Wallet = require("../models/walletModel");
+
+// returns wallet _id (or null if none given); false if the wallet is not the user's
+const resolveWallet = async (userId, walletId) => {
+  if (!walletId) return null;
+  const w = await Wallet.findOne({ _id: walletId, userId }).select("_id");
+  return w ? w._id : false;
+};
 
 // Factory: builds CRUD + overview + excel handlers for a model (Income or Expense)
 module.exports = (Model, label) => ({
   add: async (req, res) => {
     try {
-      const { description, amount, category, date } = req.body;
+      const { description, amount, category, date, walletId } = req.body;
       if (!description || amount === undefined || amount === "" || !category || !date)
         return res.status(400).json({ success: false, message: "description, amount, category and date are required" });
       if (Number.isNaN(Number(amount)) || Number(amount) < 0) return res.status(400).json({ success: false, message: "Amount must be a positive number" });
-      const doc = await Model.create({ userId: req.user._id, description, amount: Number(amount), category, date });
+      const wid = await resolveWallet(req.user._id, walletId);
+      if (wid === false) return res.status(400).json({ success: false, message: "Wallet not found" });
+      const doc = await Model.create({ userId: req.user._id, description, amount: Number(amount), category, date, walletId: wid });
       res.status(201).json({ success: true, message: `${label} added`, data: doc });
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
   },
@@ -21,10 +31,12 @@ module.exports = (Model, label) => ({
   },
   update: async (req, res) => {
     try {
-      const { description, amount, category, date } = req.body;
+      const { description, amount, category, date, walletId } = req.body;
+      const wid = await resolveWallet(req.user._id, walletId);
+      if (wid === false) return res.status(400).json({ success: false, message: "Wallet not found" });
       const doc = await Model.findOneAndUpdate(
         { _id: req.params.id, userId: req.user._id },
-        { description, amount: Number(amount), category, date },
+        { description, amount: Number(amount), category, date, walletId: wid },
         { new: true, runValidators: true }
       );
       if (!doc) return res.status(404).json({ success: false, message: `${label} not found` });

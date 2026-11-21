@@ -9,7 +9,7 @@ const CATEGORIES = {
 };
 const RANGES = [["weekly", "Last 7 days"], ["monthly", "This month"], ["yearly", "This year"], ["all", "All time"]];
 const today = () => new Date().toISOString().slice(0, 10);
-const blank = (kind) => ({ description: "", amount: "", category: CATEGORIES[kind][0], date: today() });
+const blank = (kind) => ({ description: "", amount: "", category: CATEGORIES[kind][0], date: today(), walletId: "" });
 
 export default function Transactions({ kind }) {
   const isIncome = kind === "income";
@@ -23,6 +23,9 @@ export default function Transactions({ kind }) {
   const [editId, setEditId] = useState(null);
   const [form, setForm] = useState(blank(kind));
   const [saving, setSaving] = useState(false);
+  const [wallets, setWallets] = useState([]);
+  useEffect(() => { api.get("/wallet/get").then((r) => setWallets(r.data.data.wallets)).catch(() => {}); }, []);
+  const wname = (id) => wallets.find((w) => w._id === id)?.name;
 
   const load = useCallback(() => {
     setError("");
@@ -35,7 +38,7 @@ export default function Transactions({ kind }) {
   const openAdd = () => { setEditId(null); setForm(blank(kind)); setModal(true); };
   const openEdit = (t) => {
     setEditId(t._id);
-    setForm({ description: t.description, amount: t.amount, category: t.category, date: new Date(t.date).toISOString().slice(0, 10) });
+    setForm({ description: t.description, amount: t.amount, category: t.category, date: new Date(t.date).toISOString().slice(0, 10), walletId: t.walletId || "" });
     setModal(true);
   };
 
@@ -110,7 +113,7 @@ export default function Transactions({ kind }) {
               <ul className="divide-y divide-slate-100">
                 {data.transactions.map((t) => (
                   <li key={t._id} className="py-3 flex items-center justify-between gap-3">
-                    <div className="min-w-0"><p className="font-medium truncate">{t.description}</p><p className="text-xs text-slate-500">{t.category} · {new Date(t.date).toLocaleDateString("en-IN")}</p></div>
+                    <div className="min-w-0"><p className="font-medium truncate">{t.description}</p><p className="text-xs text-slate-500">{t.category}{wname(t.walletId) ? ` · ${wname(t.walletId)}` : ""} · {new Date(t.date).toLocaleDateString("en-IN")}</p></div>
                     <div className="flex items-center gap-3">
                       <p className={`font-semibold ${txt}`}>{isIncome ? "+" : "-"}{money(t.amount)}</p>
                       <button onClick={() => openEdit(t)} className="text-slate-400 hover:text-blue-600" title="Edit"><Pencil size={16} /></button>
@@ -132,6 +135,10 @@ export default function Transactions({ kind }) {
             <input required type="number" min="0" step="0.01" placeholder="Amount" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} className={inp} />
             <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className={inp}>
               {CATEGORIES[kind].map((c) => <option key={c}>{c}</option>)}
+            </select>
+            <select value={form.walletId} onChange={(e) => setForm({ ...form, walletId: e.target.value })} className={inp}>
+              <option value="">No wallet (don't track)</option>
+              {wallets.map((w) => <option key={w._id} value={w._id}>{w.name}</option>)}
             </select>
             <input required type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} className={inp} />
             <button disabled={saving} className={`w-full text-white font-semibold py-2 rounded-lg disabled:opacity-60 ${isIncome ? "bg-emerald-600 hover:bg-emerald-700" : "bg-red-600 hover:bg-red-700"}`}>{saving ? "Saving..." : "Save"}</button>
