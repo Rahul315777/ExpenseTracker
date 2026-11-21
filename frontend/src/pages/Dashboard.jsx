@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Area, AreaChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { ArrowDownCircle, ArrowUpCircle, PiggyBank, Percent } from "lucide-react";
 import api, { errMsg, money } from "../api.js";
+import MonthlyComparison from "../components/MonthlyComparison.jsx";
+import SpendingTrends from "../components/SpendingTrends.jsx";
 
 export const COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#14b8a6", "#64748b"];
 const RANGES = [["weekly", "Last 7 days"], ["monthly", "This month"], ["yearly", "This year"], ["all", "All time"]];
@@ -81,6 +83,10 @@ export default function Dashboard() {
               )}
             </div>
           </div>
+
+          <MonthlyComparison />
+
+          <SpendingTrends />
 
           <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
             <h2 className="font-semibold mb-3">Recent Transactions</h2>
