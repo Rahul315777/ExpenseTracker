@@ -7,6 +7,7 @@ const schema = new mongoose.Schema(
     category: { type: String, required: true, trim: true },
     date: { type: Date, required: true },
     walletId: { type: mongoose.Schema.Types.ObjectId, ref: "Wallet", default: null },
+    recurringId: { type: mongoose.Schema.Types.ObjectId, ref: "Recurring", default: null },
     type: { type: String, default: "expense" },
   },
   { timestamps: true }

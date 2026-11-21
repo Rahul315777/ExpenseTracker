@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, TrendingUp, TrendingDown, Target, Wallet, User, LogOut } from "lucide-react";
+import api from "../api.js";
+import { LayoutDashboard, TrendingUp, TrendingDown, Target, Wallet, Repeat, User, LogOut } from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
 import logo from "../logo.png";
 
@@ -9,6 +11,7 @@ const links = [
   { to: "/expense", label: "Expense", icon: TrendingDown },
   { to: "/budgets", label: "Budgets", icon: Target },
   { to: "/wallets", label: "Wallets", icon: Wallet },
+  { to: "/recurring", label: "Recurring", icon: Repeat },
   { to: "/profile", label: "Profile", icon: User },
 ];
 
@@ -16,6 +19,10 @@ export default function Layout() {
   const { user, logout } = useAuth();
   const nav = useNavigate();
   const out = () => { logout(); nav("/login"); };
+
+  // add any recurring entries that became due, then show the pages (so they load fresh data)
+  const [ready, setReady] = useState(false);
+  useEffect(() => { api.post("/recurring/process").catch(() => {}).finally(() => setReady(true)); }, []);
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
@@ -40,7 +47,7 @@ export default function Layout() {
         </div>
         <button onClick={out} className="md:hidden text-red-600 p-2" title="Logout"><LogOut size={18} /></button>
       </aside>
-      <main className="flex-1 p-4 md:p-8 max-w-6xl w-full mx-auto"><Outlet /></main>
+      <main className="flex-1 p-4 md:p-8 max-w-6xl w-full mx-auto">{ready ? <Outlet /> : <p className="text-slate-500">Loading...</p>}</main>
     </div>
   );
 }

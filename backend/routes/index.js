@@ -6,6 +6,7 @@ const makeTx = require("../controllers/transactionController");
 const budget = require("../controllers/budgetController");
 const wallet = require("../controllers/walletController");
 const analytics = require("../controllers/analyticsController");
+const recurring = require("../controllers/recurringController");
 const Income = require("../models/incomeModel");
 const Expense = require("../models/expenseModel");
 
@@ -18,6 +19,12 @@ router.put("/user/update", auth, user.updateProfile);
 router.put("/user/password", auth, user.changePassword);
 
 router.get("/dashboard", auth, dash.getDashboard);
+router.get("/recurring/get", auth, recurring.list);
+router.post("/recurring/add", auth, recurring.create);
+router.put("/recurring/update/:id", auth, recurring.update);
+router.delete("/recurring/delete/:id", auth, recurring.remove);
+router.post("/recurring/process", auth, recurring.process);
+
 router.get("/analytics/comparison", auth, analytics.comparison);
 router.get("/analytics/trends", auth, analytics.trends);
 

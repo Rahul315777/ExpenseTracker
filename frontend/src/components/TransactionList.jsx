@@ -134,7 +134,7 @@ export default function TransactionList({ kind, title, categories, wallets, wnam
                   <input type="checkbox" className="h-4 w-4 accent-emerald-600 shrink-0" checked={selected.has(t._id)} onChange={() => toggle(t._id)} aria-label="Select" />
                   <div className="min-w-0 flex-1">
                     <p className="font-medium truncate">{t.description}</p>
-                    <p className="text-xs text-slate-500">{t.category}{wname(t.walletId) ? ` · ${wname(t.walletId)}` : ""} · {new Date(t.date).toLocaleDateString("en-IN")}</p>
+                    <p className="text-xs text-slate-500">{t.category}{wname(t.walletId) ? ` · ${wname(t.walletId)}` : ""}{t.recurringId ? " · Auto" : ""} · {new Date(t.date).toLocaleDateString("en-IN")}</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <p className={`font-semibold ${txt}`}>{isIncome ? "+" : "-"}{money(t.amount)}</p>
