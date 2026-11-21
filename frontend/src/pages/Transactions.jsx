@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Download, Pencil, Plus, Trash2, X } from "lucide-react";
 import api, { errMsg, money } from "../api.js";
+import TransactionList from "../components/TransactionList.jsx";
 
 const CATEGORIES = {
   income: ["Salary", "Freelance", "Business", "Investments", "Gift", "Other"],
@@ -24,6 +25,8 @@ export default function Transactions({ kind }) {
   const [form, setForm] = useState(blank(kind));
   const [saving, setSaving] = useState(false);
   const [wallets, setWallets] = useState([]);
+  const [listKey, setListKey] = useState(0);
+  const refreshList = () => setListKey((k) => k + 1);
   useEffect(() => { api.get("/wallet/get").then((r) => setWallets(r.data.data.wallets)).catch(() => {}); }, []);
   const wname = (id) => wallets.find((w) => w._id === id)?.name;
 
@@ -47,13 +50,13 @@ export default function Transactions({ kind }) {
     try {
       if (editId) await api.put(`/${kind}/update/${editId}`, form);
       else await api.post(`/${kind}/add`, form);
-      setModal(false); load();
+      setModal(false); load(); refreshList();
     } catch (err) { setError(errMsg(err)); } finally { setSaving(false); }
   };
 
   const remove = async (id) => {
     if (!window.confirm(`Delete this ${kind}?`)) return;
-    try { await api.delete(`/${kind}/delete/${id}`); load(); } catch (err) { setError(errMsg(err)); }
+    try { await api.delete(`/${kind}/delete/${id}`); load(); refreshList(); } catch (err) { setError(errMsg(err)); }
   };
 
   const download = async () => {
@@ -107,23 +110,7 @@ export default function Transactions({ kind }) {
             </div>
           )}
 
-          <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
-            <h2 className="font-semibold mb-3">All {title}</h2>
-            {data.transactions.length === 0 ? <p className="text-slate-400 text-sm">Nothing here yet. Click “Add {title}” to start.</p> : (
-              <ul className="divide-y divide-slate-100">
-                {data.transactions.map((t) => (
-                  <li key={t._id} className="py-3 flex items-center justify-between gap-3">
-                    <div className="min-w-0"><p className="font-medium truncate">{t.description}</p><p className="text-xs text-slate-500">{t.category}{wname(t.walletId) ? ` · ${wname(t.walletId)}` : ""} · {new Date(t.date).toLocaleDateString("en-IN")}</p></div>
-                    <div className="flex items-center gap-3">
-                      <p className={`font-semibold ${txt}`}>{isIncome ? "+" : "-"}{money(t.amount)}</p>
-                      <button onClick={() => openEdit(t)} className="text-slate-400 hover:text-blue-600" title="Edit"><Pencil size={16} /></button>
-                      <button onClick={() => remove(t._id)} className="text-slate-400 hover:text-red-600" title="Delete"><Trash2 size={16} /></button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+          <TransactionList kind={kind} title={title} categories={CATEGORIES[kind]} wallets={wallets} wname={wname} txt={txt} isIncome={isIncome} refreshKey={listKey} onEdit={openEdit} onDelete={remove} />
         </>
       )}
 

@@ -1,6 +1,10 @@
+const mongoose = require("mongoose");
 const ExcelJS = require("exceljs");
 const { getRange } = require("../utils");
 const Wallet = require("../models/walletModel");
+
+const escapeRegex = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const SORTS = { date_desc: { date: -1, createdAt: -1 }, date_asc: { date: 1, createdAt: 1 }, amount_desc: { amount: -1 }, amount_asc: { amount: 1 } };
 
 // returns wallet _id (or null if none given); false if the wallet is not the user's
 const resolveWallet = async (userId, walletId) => {
@@ -21,6 +25,37 @@ module.exports = (Model, label) => ({
       if (wid === false) return res.status(400).json({ success: false, message: "Wallet not found" });
       const doc = await Model.create({ userId: req.user._id, description, amount: Number(amount), category, date, walletId: wid });
       res.status(201).json({ success: true, message: `${label} added`, data: doc });
+    } catch (e) { res.status(500).json({ success: false, message: e.message }); }
+  },
+  search: async (req, res) => {
+    try {
+      const { q, category, walletId, minAmount, maxAmount, from, to, sort } = req.query;
+      const page = Math.max(parseInt(req.query.page) || 1, 1);
+      const limit = Math.min(Math.max(parseInt(req.query.limit) || 10, 1), 50);
+      const filter = { userId: req.user._id };
+
+      if (q && q.trim()) filter.description = { $regex: escapeRegex(q.trim()), $options: "i" };
+      if (category) filter.category = category;
+      if (walletId === "none") filter.walletId = null;
+      else if (walletId) {
+        if (!mongoose.isValidObjectId(walletId)) return res.status(400).json({ success: false, message: "Invalid wallet" });
+        filter.walletId = new mongoose.Types.ObjectId(walletId);
+      }
+      const amt = {};
+      if (minAmount !== undefined && minAmount !== "" && !Number.isNaN(Number(minAmount))) amt.$gte = Number(minAmount);
+      if (maxAmount !== undefined && maxAmount !== "" && !Number.isNaN(Number(maxAmount))) amt.$lte = Number(maxAmount);
+      if (Object.keys(amt).length) filter.amount = amt;
+      const dt = {};
+      if (from && !Number.isNaN(new Date(from))) dt.$gte = new Date(from);
+      if (to && !Number.isNaN(new Date(to))) { const d = new Date(to); d.setUTCHours(23, 59, 59, 999); dt.$lte = d; }
+      if (Object.keys(dt).length) filter.date = dt;
+
+      const [total, items, sum] = await Promise.all([
+        Model.countDocuments(filter),
+        Model.find(filter).sort(SORTS[sort] || SORTS.date_desc).skip((page - 1) * limit).limit(limit).lean(),
+        Model.aggregate([{ $match: filter }, { $group: { _id: null, t: { $sum: "$amount" } } }]),
+      ]);
+      res.json({ success: true, data: { items, total, page, pages: Math.max(Math.ceil(total / limit), 1), limit, totalAmount: sum[0]?.t || 0 } });
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
   },
   getAll: async (req, res) => {

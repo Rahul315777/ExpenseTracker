@@ -33,6 +33,7 @@ const mount = (name, Model, label) => {
   const c = makeTx(Model, label);
   router.get(`/${name}/get`, auth, c.getAll);
   router.get(`/${name}/overview`, auth, c.overview);
+  router.get(`/${name}/search`, auth, c.search);
   router.get(`/${name}/downloadexcel`, auth, c.downloadExcel);
   router.post(`/${name}/add`, auth, c.add);
   router.put(`/${name}/update/:id`, auth, c.update);
