@@ -9,6 +9,7 @@ const analytics = require("../controllers/analyticsController");
 const recurring = require("../controllers/recurringController");
 const goal = require("../controllers/goalController");
 const calendar = require("../controllers/calendarController");
+const smart = require("../controllers/smartController");
 const Income = require("../models/incomeModel");
 const Expense = require("../models/expenseModel");
 
@@ -34,6 +35,8 @@ router.delete("/goal/delete/:id", auth, goal.remove);
 router.post("/goal/:id/contribute", auth, goal.contribute);
 router.delete("/goal/:id/contribution/:cid", auth, goal.removeContribution);
 
+router.post("/smart/parse", auth, smart.parse);
+router.get("/smart/suggest", auth, smart.suggest);
 router.get("/calendar/month", auth, calendar.month);
 router.get("/analytics/comparison", auth, analytics.comparison);
 router.get("/analytics/trends", auth, analytics.trends);
