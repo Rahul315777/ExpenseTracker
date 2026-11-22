@@ -38,6 +38,19 @@ export default function Transactions({ kind }) {
   useEffect(() => { setData(null); load(); }, [load]);
   useEffect(() => { setForm(blank(kind)); setEditId(null); setModal(false); }, [kind]);
 
+  // Smart category: suggest a category while typing a new description
+  const [suggestion, setSuggestion] = useState(null);
+  useEffect(() => {
+    const text = form.description.trim();
+    if (!modal || editId || text.length < 3) { setSuggestion(null); return; }
+    const t = setTimeout(() => {
+      api.get("/smart/suggest", { params: { kind, description: text } })
+        .then((r) => { const c = r.data.data?.category; setSuggestion(c && CATEGORIES[kind].includes(c) ? c : null); })
+        .catch(() => setSuggestion(null));
+    }, 500);
+    return () => clearTimeout(t);
+  }, [form.description, kind, modal, editId]);
+
   const openAdd = () => { setEditId(null); setForm(blank(kind)); setModal(true); };
   const openEdit = (t) => {
     setEditId(t._id);
@@ -119,6 +132,9 @@ export default function Transactions({ kind }) {
           <form onSubmit={save} onClick={(e) => e.stopPropagation()} className="bg-white rounded-2xl p-6 w-full max-w-md space-y-3">
             <div className="flex justify-between items-center"><h2 className="text-lg font-bold">{editId ? "Edit" : "Add"} {title}</h2><button type="button" onClick={() => setModal(false)}><X size={20} /></button></div>
             <input required placeholder="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className={inp} />
+            {suggestion && suggestion !== form.category && (
+              <button type="button" onClick={() => setForm({ ...form, category: suggestion })} className="text-xs text-emerald-700 text-left">Suggested category: <b>{suggestion}</b> (tap to use)</button>
+            )}
             <input required type="number" min="0" step="0.01" placeholder="Amount" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} className={inp} />
             <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className={inp}>
               {CATEGORIES[kind].map((c) => <option key={c}>{c}</option>)}
