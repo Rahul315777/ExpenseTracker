@@ -4,6 +4,7 @@ import { ArrowDownCircle, ArrowUpCircle, PiggyBank, Percent } from "lucide-react
 import api, { errMsg, money } from "../api.js";
 import MonthlyComparison from "../components/MonthlyComparison.jsx";
 import UpcomingPayments from "../components/UpcomingPayments.jsx";
+import QuickAdd from "../components/QuickAdd.jsx";
 import SpendingTrends from "../components/SpendingTrends.jsx";
 
 export const COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#14b8a6", "#64748b"];
@@ -22,11 +23,12 @@ export default function Dashboard() {
   const [range, setRange] = useState("monthly");
   const [d, setD] = useState(null);
   const [error, setError] = useState("");
+  const [tick, setTick] = useState(0); // bumped when Quick Add saves, so everything reloads
 
   useEffect(() => {
     setD(null); setError("");
     api.get("/dashboard", { params: { range } }).then((r) => setD(r.data.data)).catch((e) => setError(errMsg(e)));
-  }, [range]);
+  }, [range, tick]);
 
   return (
     <div className="space-y-6">
@@ -36,6 +38,8 @@ export default function Dashboard() {
           {RANGES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
         </select>
       </div>
+      <QuickAdd onSaved={() => setTick((t) => t + 1)} />
+
       {error && <div className="bg-red-50 text-red-700 p-3 rounded-lg text-sm">{error}</div>}
       {!d && !error && <p className="text-slate-500">Loading...</p>}
       {d && (
@@ -85,11 +89,11 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <UpcomingPayments />
+          <UpcomingPayments key={`u${tick}`} />
 
-          <MonthlyComparison />
+          <MonthlyComparison key={`m${tick}`} />
 
-          <SpendingTrends />
+          <SpendingTrends key={`s${tick}`} />
 
           <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
             <h2 className="font-semibold mb-3">Recent Transactions</h2>
