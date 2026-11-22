@@ -3,6 +3,7 @@ import { Area, AreaChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContaine
 import { ArrowDownCircle, ArrowUpCircle, PiggyBank, Percent } from "lucide-react";
 import api, { errMsg, money } from "../api.js";
 import MonthlyComparison from "../components/MonthlyComparison.jsx";
+import UpcomingPayments from "../components/UpcomingPayments.jsx";
 import SpendingTrends from "../components/SpendingTrends.jsx";
 
 export const COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#14b8a6", "#64748b"];
@@ -83,6 +84,8 @@ export default function Dashboard() {
               )}
             </div>
           </div>
+
+          <UpcomingPayments />
 
           <MonthlyComparison />
 
