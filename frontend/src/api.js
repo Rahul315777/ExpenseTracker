@@ -22,13 +22,9 @@ api.interceptors.response.use(
   }
 );
 
-export const errMsg = (e) =>
-  e.response?.data?.message || e.message || "Something went wrong";
-
+export const errMsg = (e) => e.response?.data?.message || e.message || "Something went wrong";
 export const money = (n) => {
   const v = Number(n || 0);
-  const formatted = Math.abs(v).toLocaleString("en-IN", { maximumFractionDigits: 2 });
-  return v < 0 ? `-₹${formatted}` : `₹${formatted}`;
+  return (v < 0 ? "-\u20B9" : "\u20B9") + Math.abs(v).toLocaleString("en-IN", { maximumFractionDigits: 2 });
 };
-
 export default api;
