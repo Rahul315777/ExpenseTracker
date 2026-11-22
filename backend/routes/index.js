@@ -7,6 +7,7 @@ const budget = require("../controllers/budgetController");
 const wallet = require("../controllers/walletController");
 const analytics = require("../controllers/analyticsController");
 const recurring = require("../controllers/recurringController");
+const goal = require("../controllers/goalController");
 const Income = require("../models/incomeModel");
 const Expense = require("../models/expenseModel");
 
@@ -24,6 +25,13 @@ router.post("/recurring/add", auth, recurring.create);
 router.put("/recurring/update/:id", auth, recurring.update);
 router.delete("/recurring/delete/:id", auth, recurring.remove);
 router.post("/recurring/process", auth, recurring.process);
+
+router.get("/goal/get", auth, goal.list);
+router.post("/goal/add", auth, goal.create);
+router.put("/goal/update/:id", auth, goal.update);
+router.delete("/goal/delete/:id", auth, goal.remove);
+router.post("/goal/:id/contribute", auth, goal.contribute);
+router.delete("/goal/:id/contribution/:cid", auth, goal.removeContribution);
 
 router.get("/analytics/comparison", auth, analytics.comparison);
 router.get("/analytics/trends", auth, analytics.trends);

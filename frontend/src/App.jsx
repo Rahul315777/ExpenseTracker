@@ -9,6 +9,7 @@ import Profile from "./pages/Profile.jsx";
 import Budgets from "./pages/Budgets.jsx";
 import Wallets from "./pages/Wallets.jsx";
 import Recurring from "./pages/Recurring.jsx";
+import Goals from "./pages/Goals.jsx";
 
 function Protected({ children }) {
   const { token } = useAuth();
@@ -31,6 +32,7 @@ export default function App() {
         <Route path="budgets" element={<Budgets />} />
         <Route path="wallets" element={<Wallets />} />
         <Route path="recurring" element={<Recurring />} />
+        <Route path="goals" element={<Goals />} />
         <Route path="profile" element={<Profile />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
