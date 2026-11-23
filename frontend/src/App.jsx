@@ -12,8 +12,11 @@ import Recurring from "./pages/Recurring.jsx";
 import Goals from "./pages/Goals.jsx";
 import Calendar from "./pages/Calendar.jsx";
 import Insights from "./pages/Insights.jsx";
+<<<<<<< HEAD
 import Debts from "./pages/Debts.jsx";
 import Loans from "./pages/Loans.jsx";
+=======
+>>>>>>> 7525cff1e806f97b1f5e95a17184ac1c7535f04f
 
 function Protected({ children }) {
   const { token } = useAuth();
@@ -39,8 +42,11 @@ export default function App() {
         <Route path="goals" element={<Goals />} />
         <Route path="calendar" element={<Calendar />} />
         <Route path="insights" element={<Insights />} />
+<<<<<<< HEAD
         <Route path="debts" element={<Debts />} />
         <Route path="loans" element={<Loans />} />
+=======
+>>>>>>> 7525cff1e806f97b1f5e95a17184ac1c7535f04f
         <Route path="profile" element={<Profile />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

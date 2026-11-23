@@ -1,8 +1,11 @@
 const Recurring = require("../models/recurringModel");
 const Wallet = require("../models/walletModel");
 const Income = require("../models/incomeModel");
+<<<<<<< HEAD
 const Loan = require("../models/loanModel");
 const { emisInRange } = require("../lib/loanMath");
+=======
+>>>>>>> 7525cff1e806f97b1f5e95a17184ac1c7535f04f
 const Expense = require("../models/expenseModel");
 
 // ---- date helpers (UTC, because transaction dates are stored as UTC midnight) ----
@@ -74,9 +77,12 @@ exports.list = async (req, res) => {
       let d = r.nextDue, n = 0;
       while (d <= horizon && n++ < 5) { upcoming.push({ ruleId: r._id, description: r.description, amount: r.amount, kind: r.kind, date: d, isSubscription: r.isSubscription }); d = nextDate(d, r.frequency, r.anchorDay); }
     });
+<<<<<<< HEAD
     // unpaid loan EMIs in the next 30 days
     const loans = await Loan.find({ userId: req.user._id }).lean();
     loans.forEach((l) => emisInRange(l, today, addDays(horizon, 1)).forEach((r) => upcoming.push({ ruleId: null, description: `${l.name} EMI`, amount: r.emi, kind: "expense", date: r.date, isSubscription: false, isEmi: true })));
+=======
+>>>>>>> 7525cff1e806f97b1f5e95a17184ac1c7535f04f
     upcoming.sort((a, b) => a.date - b.date);
 
     res.json({

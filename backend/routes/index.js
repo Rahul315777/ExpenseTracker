@@ -11,8 +11,11 @@ const goal = require("../controllers/goalController");
 const calendar = require("../controllers/calendarController");
 const smart = require("../controllers/smartController");
 const insights = require("../controllers/insightsController");
+<<<<<<< HEAD
 const debt = require("../controllers/debtController");
 const loan = require("../controllers/loanController");
+=======
+>>>>>>> 7525cff1e806f97b1f5e95a17184ac1c7535f04f
 const Income = require("../models/incomeModel");
 const Expense = require("../models/expenseModel");
 
@@ -40,6 +43,7 @@ router.delete("/goal/:id/contribution/:cid", auth, goal.removeContribution);
 
 router.post("/smart/parse", auth, smart.parse);
 router.get("/smart/suggest", auth, smart.suggest);
+<<<<<<< HEAD
 router.get("/debt/get", auth, debt.list);
 router.post("/debt/add", auth, debt.create);
 router.put("/debt/update/:id", auth, debt.update);
@@ -54,6 +58,8 @@ router.put("/loan/update/:id", auth, loan.update);
 router.delete("/loan/delete/:id", auth, loan.remove);
 router.post("/loan/:id/paid", auth, loan.setPaid);
 
+=======
+>>>>>>> 7525cff1e806f97b1f5e95a17184ac1c7535f04f
 router.get("/insights", auth, insights.get);
 router.get("/calendar/month", auth, calendar.month);
 router.get("/analytics/comparison", auth, analytics.comparison);

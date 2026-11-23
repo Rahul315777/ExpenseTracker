@@ -1,8 +1,11 @@
 const Income = require("../models/incomeModel");
 const Expense = require("../models/expenseModel");
 const Recurring = require("../models/recurringModel");
+<<<<<<< HEAD
 const Loan = require("../models/loanModel");
 const { emisInRange } = require("../lib/loanMath");
+=======
+>>>>>>> 7525cff1e806f97b1f5e95a17184ac1c7535f04f
 const { _nextDate: nextDate } = require("./recurringController");
 
 const iso = (d) => d.toISOString().slice(0, 10);
@@ -17,11 +20,18 @@ exports.month = async (req, res) => {
     const end = new Date(Date.UTC(y, m + 1, 1));
 
     const q = { userId: req.user._id, date: { $gte: start, $lt: end } };
+<<<<<<< HEAD
     const [incomes, expenses, rules, loans] = await Promise.all([
       Income.find(q).sort({ createdAt: 1 }).lean(),
       Expense.find(q).sort({ createdAt: 1 }).lean(),
       Recurring.find({ userId: req.user._id, active: true }).lean(),
       Loan.find({ userId: req.user._id }).lean(),
+=======
+    const [incomes, expenses, rules] = await Promise.all([
+      Income.find(q).sort({ createdAt: 1 }).lean(),
+      Expense.find(q).sort({ createdAt: 1 }).lean(),
+      Recurring.find({ userId: req.user._id, active: true }).lean(),
+>>>>>>> 7525cff1e806f97b1f5e95a17184ac1c7535f04f
     ]);
 
     const days = {};
@@ -38,8 +48,11 @@ exports.month = async (req, res) => {
         d = nextDate(d, r.frequency, r.anchorDay);
       }
     });
+<<<<<<< HEAD
     // unpaid loan EMIs falling in this month
     loans.forEach((l) => emisInRange(l, start, end).forEach((r) => due.push({ ruleId: null, date: iso(r.date), description: `${l.name} EMI`, amount: r.emi, kind: "expense", isSubscription: false, isEmi: true })));
+=======
+>>>>>>> 7525cff1e806f97b1f5e95a17184ac1c7535f04f
     due.sort((a, b) => a.date.localeCompare(b.date));
 
     const sum = (arr) => arr.reduce((a, c) => a + c.amount, 0);
