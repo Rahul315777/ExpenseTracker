@@ -12,6 +12,7 @@ const calendar = require("../controllers/calendarController");
 const smart = require("../controllers/smartController");
 const insights = require("../controllers/insightsController");
 const debt = require("../controllers/debtController");
+const loan = require("../controllers/loanController");
 const Income = require("../models/incomeModel");
 const Expense = require("../models/expenseModel");
 
@@ -45,6 +46,13 @@ router.put("/debt/update/:id", auth, debt.update);
 router.delete("/debt/delete/:id", auth, debt.remove);
 router.post("/debt/:id/payment", auth, debt.addPayment);
 router.delete("/debt/:id/payment/:pid", auth, debt.removePayment);
+
+router.get("/loan/get", auth, loan.list);
+router.get("/loan/:id", auth, loan.get);
+router.post("/loan/add", auth, loan.create);
+router.put("/loan/update/:id", auth, loan.update);
+router.delete("/loan/delete/:id", auth, loan.remove);
+router.post("/loan/:id/paid", auth, loan.setPaid);
 
 router.get("/insights", auth, insights.get);
 router.get("/calendar/month", auth, calendar.month);
