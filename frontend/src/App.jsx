@@ -13,6 +13,7 @@ import Goals from "./pages/Goals.jsx";
 import Calendar from "./pages/Calendar.jsx";
 import Insights from "./pages/Insights.jsx";
 import Debts from "./pages/Debts.jsx";
+import Loans from "./pages/Loans.jsx";
 
 function Protected({ children }) {
   const { token } = useAuth();
@@ -39,6 +40,7 @@ export default function App() {
         <Route path="calendar" element={<Calendar />} />
         <Route path="insights" element={<Insights />} />
         <Route path="debts" element={<Debts />} />
+        <Route path="loans" element={<Loans />} />
         <Route path="profile" element={<Profile />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

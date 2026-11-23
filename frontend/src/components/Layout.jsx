@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import api from "../api.js";
-import { LayoutDashboard, TrendingUp, TrendingDown, Target, Wallet, Repeat, PiggyBank, CalendarDays, Lightbulb, Users, User, LogOut } from "lucide-react";
+import { LayoutDashboard, TrendingUp, TrendingDown, Target, Wallet, Repeat, PiggyBank, CalendarDays, Lightbulb, Users, Landmark, User, LogOut } from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
 import logo from "../logo.png";
 
@@ -16,6 +16,7 @@ const links = [
   { to: "/calendar", label: "Calendar", icon: CalendarDays },
   { to: "/insights", label: "Insights", icon: Lightbulb },
   { to: "/debts", label: "Debts", icon: Users },
+  { to: "/loans", label: "Loans & EMI", icon: Landmark },
   { to: "/profile", label: "Profile", icon: User },
 ];
 
