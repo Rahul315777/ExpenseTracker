@@ -15,6 +15,7 @@ A full-stack personal finance manager: track income and expenses, set budgets, m
 - **Financial Calendar:** daily income/spend and upcoming dues
 - **Quick Add:** type "Aaj 250 ka lunch kiya" and it becomes an expense (rule-based parser, English + Hinglish)
 - **Smart Categories:** category suggestions that learn from your own history
+- **Loans & EMI:** EMI calculator (reducing balance), full payment schedule, outstanding balance, EMI reminders
 - **Debt Manager:** money lent/borrowed, repayments, due dates and per-person balances
 - **Smart Insights:** monthly report, unusual-expense detection and saving tips (rule-based, computed from your data)
 
